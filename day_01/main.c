@@ -103,7 +103,7 @@ void read_file_into_arrays(int *int_array_1, int *int_array_2, char *file_str) {
   char nbr2_str[10];
   int index = 0;
 
-  printf("Entering read_file_into_arrays\n");
+  //   printf("Entering read_file_into_arrays\n");
   max_line_length = find_max_line_length(input_file_str);
   line_count = find_line_count(input_file_str);
   line = (char *)malloc(max_line_length * sizeof(char));
@@ -112,19 +112,19 @@ void read_file_into_arrays(int *int_array_1, int *int_array_2, char *file_str) {
     perror("Error opening file");
     exit(1);
   }
-  printf("Before while loop\n");
+  //   printf("Before while loop\n");
   int i = 0;
   while (fgets(line, max_line_length + 1, file) != NULL) {
     i++;
-    printf("line: %s\n", line);
-    printf("i: %d\n", i);
+    // printf("line: %s\n", line);
+    // printf("i: %d\n", i);
     extract_two_numbers_as_string_from_line(line, nbr1_str, nbr2_str);
     nbr1 = atoi(nbr1_str);
     nbr2 = atoi(nbr2_str);
     int_array_1[index] = nbr1;
     int_array_2[index] = nbr2;
     index++;
-    printf("nbr1: %d, nbr2: %d\n", nbr1, nbr2);
+    // printf("nbr1: %d, nbr2: %d\n", nbr1, nbr2);
   }
   fclose(file);
   free(line);
@@ -148,10 +148,33 @@ int calculate_total(int *array1, int *array2, int size) {
     if (single_sum < 0) {
       single_sum *= -1;
     }
-    // printf("single_sum: %d\n", single_sum);
-    // printf("total: %d\n", total);
+    printf("single_sum: %d\n", single_sum);
+    printf("total: %d\n", total);
     total += single_sum;
   }
+  return total;
+}
+
+int find_and_sum_multipliers(int *array1, int *array2, int size) {
+  int multiplier = 0;
+  int i;
+  int j;
+  int partial_sum;
+  int total = 0;
+  for (i = 0; i < size + 1; i++) {
+    multiplier = 0;
+    for (j = 0; j < size + 1; j++) {
+      if (array1[i] == array2[j]) {
+        multiplier++;
+      }
+      printf("j: %d\n", j + 1);
+    }
+    partial_sum = array1[i] * multiplier;
+
+    total += partial_sum;
+  }
+  printf("i: %d\n", i + 1);
+  printf("Total: %d\n", total);
   return total;
 }
 
@@ -183,21 +206,22 @@ int main(int argc, char *argv[]) {
   //   int *array2 = calloc(line_count, sizeof(int));
   int *array1 = malloc(line_count * sizeof(int));
   int *array2 = malloc(line_count * sizeof(int));
-  printf("array1: %p\n", array1);
+  //   printf("array1: %p\n", array1);
   read_file_into_arrays(array1, array2, input_file_str);
   printf("After read_file_into_arrays\n");
   sort_array_with_qsort(array1, line_count + 1, compare);
-  //   for (int i = 0; i < line_count; i++) {
-  //     printf("array1[%d]: %d\n", i, array1[i]);
-  //   }
-  printf("After sort_array_with_qsort\n");
-  sort_array_with_qsort(array2, line_count + 1, compare);
-  for (int i = 0; i < line_count + 1; i++) {
-    printf("array1[%d]: %d\n ", i, array1[i]);
+  for (int i = 0; i < line_count; i++) {
+    printf("array1[%d]: %d\n", i, array1[i]);
   }
-  printf("After sort_array_with_qsort\n");
-  total = calculate_total(array1, array2, line_count);
-  printf("Total: %d\n", total);
+  //   printf("After sort_array_with_qsort\n");
+  sort_array_with_qsort(array2, line_count + 1, compare);
+  //   for (int i = 0; i < line_count + 1; i++) {
+  //     printf("array1[%d]: %d\n ", i, array1[i]);
+  //   }
+  //   printf("After sort_array_with_qsort\n");
+  //   total = calculate_total(array1, array2, line_count);
+  //   printf("Total: %d\n", total);
+  total = find_and_sum_multipliers(array1, array2, line_count);
 
   return 0;
 }
