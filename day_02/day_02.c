@@ -53,7 +53,7 @@ int find_line_count() {
 
 int check_array_ascending_order(int *arr, int size) {
   for (int i = 0; i < size - 1; i++) {
-    if (arr[i] > arr[i + 1]) {
+    if (arr[i] >= arr[i + 1]) {
       return (0);
     }
   }
@@ -78,17 +78,31 @@ int check_array_ascending_or_descending_order(int *arr, int size) {
   return (0);
 }
 
-void convert_report_str_into_report_int_arr(char *report_str) {
-  printf("Entering convert_report_str_into_report_int_arr\n");
+int check_distance_between_elements(int *arr1, int size) {
+  int distance_between_elements = 0;
+  for (int i = 0; i < size - 1; i++) {
+    distance_between_elements = arr1[i + 1] - arr1[i];
+    if (distance_between_elements < 0) {
+      distance_between_elements = -distance_between_elements;
+    }
+    if (distance_between_elements > 3 || distance_between_elements < 1) {
+      return (0);
+    }
+  }
+  return (1);
+}
+
+void convert_report_str_into_report_int_arr(char *report_str, int *counter) {
+  //   printf("Entering convert_report_str_into_report_int_arr\n");
   int elements_in_report = 0;
   int *report_arr = NULL;
   int i = 0;
   int j = 0;
   //   int report_str_len = strlen(report_str);
   //   report_arr = (int *)malloc(report_str_len * sizeof(int));
-  printf("report_str: %s\n", report_str);
+  //   printf("report_str: %s\n", report_str);
   while (report_str[i] != '\0') {
-    printf("report_str[%d]: %c\n", i, report_str[i]);
+    // printf("report_str[%d]: %c\n", i, report_str[i]);
     // printf("first while\n");
     while (report_str[i] == ' ' && report_str[i] != '\0') {
       i++;
@@ -96,7 +110,7 @@ void convert_report_str_into_report_int_arr(char *report_str) {
     if (isdigit(report_str[i])) {
       elements_in_report++;
       i++;
-      printf("elements_in_report: %d\n", elements_in_report);
+      //   printf("elements_in_report: %d\n", elements_in_report);
       while (isdigit(report_str[i] && report_str[i] != '\0')) {
         i++;
       }
@@ -105,7 +119,7 @@ void convert_report_str_into_report_int_arr(char *report_str) {
       i++;
     }
   }
-  printf("elements_in_report: %d\n", elements_in_report);
+  //   printf("elements_in_report: %d\n", elements_in_report);
   report_arr = malloc(elements_in_report * sizeof(int));
   i = 0;
   j = 0;
@@ -116,9 +130,9 @@ void convert_report_str_into_report_int_arr(char *report_str) {
     }
     report_arr[j] = atoi(&report_str[i]);
     // report_arr[j] = atol(&report_str[i]);
-    printf("report_arr after atol [%d]: %d\n", j, report_arr[j]);
+    // printf("report_arr after atol [%d]: %d\n", j, report_arr[j]);
     j++;
-    printf("report_str[%d]: %c\n", i, report_str[i]);
+    // printf("report_str[%d]: %c\n", i, report_str[i]);
     while (isdigit(report_str[i]) && report_str[i] != '\0') {
       //   printf("second while\n");
       i++;
@@ -127,18 +141,18 @@ void convert_report_str_into_report_int_arr(char *report_str) {
       i++;
     }
   }
-  for (int k = 0; k < elements_in_report; k++) {
-    printf("report_arr[%d]: %d\n", k, report_arr[k]);
-  }
 
-  if (check_array_ascending_or_descending_order(report_arr, elements_in_report)) {
+  if (check_array_ascending_or_descending_order(report_arr,
+                                                elements_in_report)) {
     printf("Safe report\n");
-  }
-  else if (check_distance_between_elements(report_arr, elements_in_report)) {
+  } else if (check_distance_between_elements(report_arr, elements_in_report)) {
     printf("Safe report\n");
-  }
-  else {
+  } else {
     printf("Dangerous report\n");
+    (*counter)++;
+    for (int k = 0; k < elements_in_report; k++) {
+      printf("report_arr[%d]: %d\n", k, report_arr[k]);
+    }
   }
 
   free(report_arr);
@@ -154,12 +168,13 @@ while (report_str[i] != '\0') {
   j++;
 
 
-	printf("Dangerous report\n");", k, report_arr[k]);
+        printf("Dangerous report\n");", k, report_arr[k]);
 }
 */
 
 // read the file adn divide it into strings
 void parse_reports() {
+  int counter = 0;
   FILE *file;
 
   char *file_name = "input.txt";
@@ -187,10 +202,12 @@ void parse_reports() {
     // printf("report_str[%d]: %s\n", i, report_str);
   }
   for (int j = 0; j < number_of_reports; j++) {
-    convert_report_str_into_report_int_arr(reports_str_arr[j]);
+    convert_report_str_into_report_int_arr(reports_str_arr[j], &counter);
   }
 
   printf("Number of reports: %d\n", number_of_reports);
+  printf("counter: %d\n", counter);
+  printf("Number of safe reports: %d\n", number_of_reports - counter);
 }
 
 int main() {
